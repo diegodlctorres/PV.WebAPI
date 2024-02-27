@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace PV.WebAPI.Models;
 
@@ -13,6 +14,8 @@ public partial class Usuario
 
     public string? Contraseña { get; set; }
 
+
+    [EmailAddress(ErrorMessage = "Ingrese un correo electrónico válido")]
     public string? CorreoElectronico { get; set; }
 
     public virtual ICollection<Receta> Receta { get; set; } = new List<Receta>();

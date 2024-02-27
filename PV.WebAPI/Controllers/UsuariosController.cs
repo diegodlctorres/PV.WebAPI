@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PV.WebAPI.Models;
+using System.Text.RegularExpressions;
 
 namespace PV.WebAPI.Controllers
 {
@@ -35,7 +31,7 @@ namespace PV.WebAPI.Controllers
             {
                 return Unauthorized("Credenciales inválidas.");
             }
-            
+
             return usuario;
         }
 
@@ -105,14 +101,30 @@ namespace PV.WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {
-            if (_context.Usuarios == null)
-            {
-                return Problem("Entity set 'DbPlatoVoladorContext.Usuarios'  is null.");
-            }
-            _context.Usuarios.Add(usuario);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUsuario", new { id = usuario.UsuarioId }, usuario);
+            if (!ModelState.IsValid || !EsCorreoElectronicoValido(usuario.CorreoElectronico))
+            {
+                ModelState.AddModelError("CorreoElectronico", "El formato del correo electrónico no es válido.");
+                return BadRequest(ModelState); 
+            }
+
+            try
+            {
+                _context.Usuarios.Add(usuario);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetUsuario", new { id = usuario.UsuarioId }, usuario);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Error al guardar en la base de datos: {ex.Message}");
+            }
+        }
+        private bool EsCorreoElectronicoValido(string correoElectronico)
+        {
+            // Expresión regular para validar el formato del correo electrónico
+            string patronCorreoElectronico = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
+            return Regex.IsMatch(correoElectronico, patronCorreoElectronico);
         }
 
         // DELETE: api/Usuarios/5
