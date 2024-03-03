@@ -83,7 +83,7 @@ namespace PV.WebAPI.Controllers
         // POST: api/Recetas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Receta>> PostReceta(Receta receta)
+        public async Task<ActionResult<Receta>> PostReceta(Receta receta, List<IngredientesPorReceta> ingredientesPorRecetas)
         {
           if (_context.Recetas == null)
           {
@@ -92,7 +92,17 @@ namespace PV.WebAPI.Controllers
             _context.Recetas.Add(receta);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetReceta", new { id = receta.RecetaId }, receta);
+            foreach(var Ingrediente in ingredientesPorRecetas) {
+                if (_context.IngredientesPorReceta == null)
+          {
+              return Problem("Entity set 'DbPlatoVoladorContext.IngredientesPorReceta'  is null.");
+          }
+            _context.IngredientesPorReceta.Add(Ingrediente);
+            await _context.SaveChangesAsync();
+            }
+
+            //return CreatedAtAction("GetReceta", new { id = receta.RecetaId }, receta);
+            return Ok();
         }
 
         // DELETE: api/Recetas/5
