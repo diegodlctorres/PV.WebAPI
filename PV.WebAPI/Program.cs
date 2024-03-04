@@ -21,6 +21,8 @@ builder.Services.AddSwaggerGen(options =>{
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Plato API", Version = "v1" });
             });
 
+
+
 // Configure the DbContext
 builder.Services.AddDbContext<DbPlatoVoladorContext>(options =>
 {
@@ -33,8 +35,6 @@ builder.Services.AddDbContext<DbPlatoVoladorContext>(options =>
 });
 
 var app = builder.Build();
-
-
     app.UseSwagger();
     app.UseSwaggerUI(options =>
             {

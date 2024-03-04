@@ -9,7 +9,9 @@ public partial class Receta
 
     public string? NombreReceta { get; set; }
 
-    public string? URL { get; set; }
+    public string? test { get; set; }
+
+    public string? test2 { get; set; }
 
     public string? InstruccionesPreparacion { get; set; }
 

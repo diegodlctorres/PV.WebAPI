@@ -23,7 +23,7 @@ namespace PV.WebAPI.Controllers
           {
               return NotFound();
           }
-            return await _context.Ingredientes.ToListAsync();
+            return await _context.Ingredientes.OrderBy(x=>x.NombreIngrediente).ToListAsync();
         }
 
         // GET: api/Ingredientes/5

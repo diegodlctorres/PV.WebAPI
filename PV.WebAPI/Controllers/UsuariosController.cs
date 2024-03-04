@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PV.WebAPI.Models;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 namespace PV.WebAPI.Controllers
@@ -27,7 +29,7 @@ namespace PV.WebAPI.Controllers
                 return NotFound("Usuario no encontrado.");
             }
 
-            if (usuario.Contraseña != loginRequest.Contraseña)
+            if (loginRequest.Contraseña != usuario.Contraseña)
             {
                 return Unauthorized("Credenciales inválidas.");
             }

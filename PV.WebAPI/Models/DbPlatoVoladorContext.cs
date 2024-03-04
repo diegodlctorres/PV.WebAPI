@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace PV.WebAPI.Models;
@@ -45,11 +47,11 @@ public partial class DbPlatoVoladorContext : DbContext
 
             entity.HasOne(d => d.Ingrediente).WithMany(p => p.IngredientesPorReceta)
                 .HasForeignKey(d => d.IngredienteId)
-                .HasConstraintName("FK__Ingredien__Ingre__2B3F6F97");
+                .HasConstraintName("FK__Ingredien__Ingre__6383C8BA");
 
             entity.HasOne(d => d.Receta).WithMany(p => p.IngredientesPorReceta)
                 .HasForeignKey(d => d.RecetaId)
-                .HasConstraintName("FK__Ingredien__Recet__2A4B4B5E");
+                .HasConstraintName("FK__Ingredien__Recet__628FA481");
         });
 
         modelBuilder.Entity<Receta>(entity =>
@@ -59,6 +61,8 @@ public partial class DbPlatoVoladorContext : DbContext
             entity.Property(e => e.RecetaId).HasColumnName("RecetaID");
             entity.Property(e => e.NombreReceta).HasMaxLength(100);
             entity.Property(e => e.UsuarioId).HasColumnName("UsuarioID");
+            entity.Property(e => e.test).HasColumnName("test").HasMaxLength(200);
+            entity.Property(e => e.test2).HasColumnName("test2").HasMaxLength(200);
 
             entity.HasOne(d => d.Usuario).WithMany(p => p.Receta)
                 .HasForeignKey(d => d.UsuarioId)

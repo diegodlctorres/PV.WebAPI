@@ -28,7 +28,28 @@ namespace PV.WebAPI.Controllers
             {
                 return NotFound();
             }
-            return await _context.Recetas.ToListAsync();
+
+            var query = from receta in _context.Recetas
+                        join usuario in _context.Usuarios on receta.UsuarioId equals usuario.UsuarioId
+                        join ingredientesPorReceta in _context.IngredientesPorReceta on receta.RecetaId equals ingredientesPorReceta.RecetaId into ingredientesGroup
+                        select new
+                        {
+                            RecetaId = receta.RecetaId,
+                            NombreReceta = receta.NombreReceta,
+                            InstruccionesPreparacion = receta.InstruccionesPreparacion,
+                            test = receta.test,
+                            test2 = receta.test2,
+                            Usuario = usuario,
+                            Ingredientes = ingredientesGroup.Select(ingredientePorReceta => new
+                            {
+                                IngredienteId = ingredientePorReceta.IngredienteId,
+                                NombreIngrediente = ingredientePorReceta.Ingrediente.NombreIngrediente,
+                                Cantidad = ingredientePorReceta.Cantidad,
+                                UnidadMedida = ingredientePorReceta.UnidadMedida
+                            }).ToList()
+                        };
+
+            return Ok(query.ToList());
         }
 
         // GET: api/Recetas/5
@@ -91,7 +112,6 @@ namespace PV.WebAPI.Controllers
             }
             _context.Recetas.Add(receta);
             await _context.SaveChangesAsync();
-
             foreach (IngredientesPorReceta ingrediente in receta.Ingredientes)
             {
                 var ingredienteAux = new IngredientesPorReceta();
@@ -99,11 +119,11 @@ namespace PV.WebAPI.Controllers
                 ingredienteAux.IngredienteId = ingrediente.IngredienteId;
                 ingredienteAux.UnidadMedida = ingrediente.UnidadMedida;
                 ingredienteAux.Cantidad = ingrediente.Cantidad;
-                
+
                 _context.IngredientesPorReceta.Add(ingredienteAux);
                 await _context.SaveChangesAsync();
             }
-            return Ok();
+            return Ok("okey");
         }
 
         // DELETE: api/Recetas/5
