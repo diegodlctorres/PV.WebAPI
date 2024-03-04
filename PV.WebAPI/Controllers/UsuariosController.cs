@@ -112,6 +112,11 @@ namespace PV.WebAPI.Controllers
 
             try
             {
+                var usuarios = await _context.Usuarios.ToListAsync();
+                if (usuarios.Any(x => x.CorreoElectronico == usuario.CorreoElectronico)) {
+                    ModelState.AddModelError("CorreoElectronico", "Este correo electronico ya ha sido registrado.");
+                    return BadRequest(ModelState);
+                }
                 _context.Usuarios.Add(usuario);
                 await _context.SaveChangesAsync();
 
