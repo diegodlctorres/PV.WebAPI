@@ -96,14 +96,13 @@ namespace PV.WebAPI.Controllers
             {
                 var ingredienteAux = new IngredientesPorReceta();
                 ingredienteAux.RecetaId = receta.RecetaId;
+                ingredienteAux.IngredienteId = ingrediente.IngredienteId;
                 ingredienteAux.UnidadMedida = ingrediente.UnidadMedida;
                 ingredienteAux.Cantidad = ingrediente.Cantidad;
                 
                 _context.IngredientesPorReceta.Add(ingredienteAux);
                 await _context.SaveChangesAsync();
             }
-
-            //return CreatedAtAction("GetReceta", new { id = receta.RecetaId }, receta);
             return Ok();
         }
 
