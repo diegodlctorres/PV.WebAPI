@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PV.WebAPI.Models;
 
@@ -54,20 +49,38 @@ namespace PV.WebAPI.Controllers
 
         // GET: api/Recetas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Receta>> GetReceta(int id)
+        public async Task<ActionResult<object>> GetReceta(int id)
         {
             if (_context.Recetas == null)
             {
                 return NotFound();
             }
-            var receta = await _context.Recetas.FindAsync(id);
-
-            if (receta == null)
+            var recetaAux = (from receta in _context.Recetas
+                         where receta.RecetaId == id
+                         join usuario in _context.Usuarios on receta.UsuarioId equals usuario.UsuarioId
+                         join ingredientesPorReceta in _context.IngredientesPorReceta on receta.RecetaId equals ingredientesPorReceta.RecetaId into ingredientesGroup
+                         select new
+                         {
+                             RecetaId = receta.RecetaId,
+                             NombreReceta = receta.NombreReceta,
+                             InstruccionesPreparacion = receta.InstruccionesPreparacion,
+                             test = receta.test,
+                             test2 = receta.test2,
+                             Usuario = usuario,
+                             Ingredientes = ingredientesGroup.Select(ingredientePorReceta => new
+                             {
+                                 IngredienteId = ingredientePorReceta.IngredienteId,
+                                 NombreIngrediente = ingredientePorReceta.Ingrediente.NombreIngrediente,
+                                 Cantidad = ingredientePorReceta.Cantidad,
+                                 UnidadMedida = ingredientePorReceta.UnidadMedida
+                             }).ToList()
+                         }).FirstOrDefault();
+            if (recetaAux == null)
             {
                 return NotFound();
             }
 
-            return receta;
+            return recetaAux;
         }
 
         // PUT: api/Recetas/5
