@@ -1,6 +1,6 @@
 namespace PV.WebAPI.Models;
 
-public partial class RecetaDTO{
-    public Receta Receta { get; set; }
-    public List<IngredientesPorReceta> IngredientesPorReceta  { get; set; }
+public partial class RecetaDTO : Receta
+{
+    public List<IngredientesPorReceta>? Ingredientes { get; set; }
 }

@@ -89,17 +89,16 @@ namespace PV.WebAPI.Controllers
             {
                 return Problem("Entity set 'DbPlatoVoladorContext.Recetas'  is null.");
             }
-            _context.Recetas.Add(receta.Receta);
+            _context.Recetas.Add(receta);
             await _context.SaveChangesAsync();
 
-            foreach (var Ingrediente in receta.IngredientesPorReceta)
+            foreach (IngredientesPorReceta ingrediente in receta.Ingredientes)
             {
-                if (_context.IngredientesPorReceta == null)
-                {
-                    return Problem("Entity set 'DbPlatoVoladorContext.IngredientesPorReceta'  is null.");
-                }
-                var ingredienteAux = Ingrediente;
-                ingredienteAux.Receta.RecetaId = receta.Receta.RecetaId;
+                var ingredienteAux = new IngredientesPorReceta();
+                ingredienteAux.RecetaId = receta.RecetaId;
+                ingredienteAux.UnidadMedida = ingrediente.UnidadMedida;
+                ingredienteAux.Cantidad = ingrediente.Cantidad;
+                
                 _context.IngredientesPorReceta.Add(ingredienteAux);
                 await _context.SaveChangesAsync();
             }
