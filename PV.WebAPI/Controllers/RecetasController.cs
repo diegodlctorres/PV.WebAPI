@@ -24,10 +24,10 @@ namespace PV.WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Receta>>> GetRecetas()
         {
-          if (_context.Recetas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Recetas == null)
+            {
+                return NotFound();
+            }
             return await _context.Recetas.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace PV.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Receta>> GetReceta(int id)
         {
-          if (_context.Recetas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Recetas == null)
+            {
+                return NotFound();
+            }
             var receta = await _context.Recetas.FindAsync(id);
 
             if (receta == null)
@@ -83,22 +83,25 @@ namespace PV.WebAPI.Controllers
         // POST: api/Recetas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Receta>> PostReceta(Receta receta, List<IngredientesPorReceta> ingredientesPorRecetas)
+        public async Task<ActionResult<Receta>> PostReceta(RecetaDTO receta)
         {
-          if (_context.Recetas == null)
-          {
-              return Problem("Entity set 'DbPlatoVoladorContext.Recetas'  is null.");
-          }
-            _context.Recetas.Add(receta);
+            if (_context.Recetas == null)
+            {
+                return Problem("Entity set 'DbPlatoVoladorContext.Recetas'  is null.");
+            }
+            _context.Recetas.Add(receta.Receta);
             await _context.SaveChangesAsync();
 
-            foreach(var Ingrediente in ingredientesPorRecetas) {
+            foreach (var Ingrediente in receta.IngredientesPorReceta)
+            {
                 if (_context.IngredientesPorReceta == null)
-          {
-              return Problem("Entity set 'DbPlatoVoladorContext.IngredientesPorReceta'  is null.");
-          }
-            _context.IngredientesPorReceta.Add(Ingrediente);
-            await _context.SaveChangesAsync();
+                {
+                    return Problem("Entity set 'DbPlatoVoladorContext.IngredientesPorReceta'  is null.");
+                }
+                var ingredienteAux = Ingrediente;
+                ingredienteAux.Receta.RecetaId = receta.Receta.RecetaId;
+                _context.IngredientesPorReceta.Add(ingredienteAux);
+                await _context.SaveChangesAsync();
             }
 
             //return CreatedAtAction("GetReceta", new { id = receta.RecetaId }, receta);
